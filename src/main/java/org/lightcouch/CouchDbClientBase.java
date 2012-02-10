@@ -35,6 +35,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import com.google.gson.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpHost;
@@ -72,14 +73,6 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 
 /**
  * Base client class to be extended by a concrete subclass, responsible for establishing
@@ -416,6 +409,13 @@ abstract class CouchDbClientBase {
 					throws JsonParseException {
 				return json.getAsJsonObject();
 			}
+		});
+
+    gsonBuilder.registerTypeAdapter(JsonObject.class, new JsonSerializer<JsonObject>() {
+            @Override
+            public JsonElement serialize(JsonObject jsonObject, Type type, JsonSerializationContext jsonSerializationContext) {
+                return jsonObject;
+            }
 		});
 		return gsonBuilder.create();
 	}
